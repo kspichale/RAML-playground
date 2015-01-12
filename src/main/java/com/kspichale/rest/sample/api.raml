@@ -13,12 +13,13 @@ traits:
       description: The author's name of the articles to search.
       example: Kai
       required: false
+ - !include pageable.yaml
 
 /articles:
  description: Collection of tech articles
  get:
   is: [
-       searchable
+       searchable, pageable
       ]
   responses:
    200:

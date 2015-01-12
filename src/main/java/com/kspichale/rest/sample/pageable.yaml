@@ -1,0 +1,13 @@
+pageable:
+ queryParameters:
+  page:
+   description: The page number of the result set to return.
+   type: number
+   minimum: 1
+   required: false
+  size:
+   description: The number of elements of a result set.
+   type: number
+   minimum: 1
+   maximum: 1014
+   required: false

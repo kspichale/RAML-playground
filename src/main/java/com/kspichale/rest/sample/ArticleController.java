@@ -19,11 +19,14 @@ public class ArticleController {
 
 	@RequestMapping(value = "/articles", method = RequestMethod.GET)
 	public List<Article> get(
-			@RequestParam(value = "author", required = false) String author) {
-		System.out.println(author);
+			@RequestParam(value = "author", required = false) String author,
+			@RequestParam(value = "page", required = false, defaultValue = "1") int page,
+			@RequestParam(value = "size", required = false, defaultValue = "10" ) int size) {
+
 		final List<Article> list = new ArrayList<Article>();
-		list.add(new Article(1, "abc"));
-		list.add(new Article(2, "def"));
+		for (int i = (page - 1) * size + 1; i < page * size + 1; i++) {
+			list.add(new Article(i, "" + i));
+		}
 		return list;
 	}
 

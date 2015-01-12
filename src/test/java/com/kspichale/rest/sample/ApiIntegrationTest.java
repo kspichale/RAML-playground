@@ -1,6 +1,7 @@
 package com.kspichale.rest.sample;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -21,6 +22,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -58,7 +60,7 @@ public class ApiIntegrationTest {
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(contentType))
 				.andExpect(jsonPath("$.[0].id", is(1)))
-				.andExpect(jsonPath("$.[0].content", is("abc")));
+				.andExpect(jsonPath("$.[0].content", is("1")));
 	}
 
 	@Test
@@ -70,7 +72,23 @@ public class ApiIntegrationTest {
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(contentType))
 				.andExpect(jsonPath("$.[0].id", is(1)))
-				.andExpect(jsonPath("$.[0].content", is("abc")));
+				.andExpect(jsonPath("$.[0].content", is("1")));
+	}
+
+	@Test
+	public void getPagedArticles() throws Exception {
+		mvc.perform(
+				get("/articles?page=1&size=2").accept(
+						MediaType.parseMediaType("application/json")))
+				.andExpect(api.matches().aggregating(aggregator))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(contentType))
+				.andExpect(jsonPath("$.[0].id", is(1)))
+				.andExpect(jsonPath("$.[0].content", is("1")))
+				.andExpect(jsonPath("$.[1].id", is(2)))
+				.andExpect(jsonPath("$.[1].content", is("2")))
+				.andExpect(jsonPath("$", hasSize(2)))
+				.andDo(MockMvcResultHandlers.print());
 	}
 
 	@Test
