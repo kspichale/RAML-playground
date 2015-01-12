@@ -42,19 +42,24 @@ traits:
  /{articleId}:
   get:
    responses:
-    200:
+    302:
      body:
       application/json:
        example: |
         {
          "data":
          {
-          "id": "2",
-          "content": "abc"
+          "id": 42,
+          "content": "article content"
          },
          "success": true,
-         "status": 200
+         "status": 302
         }
+    404:
+     body:
+      application/json:
+       example: |
+        {"message": "Article not found"}
   post:
    responses:
     201:
@@ -64,8 +69,8 @@ traits:
         {
          "data":
          {
-          "id": "2",
-          "content": "abc"
+          "id": 42,
+          "content": "article content"
          },
          "success": true,
          "status": 201

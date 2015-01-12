@@ -64,7 +64,7 @@ public class ApiIntegrationTest {
 	}
 
 	@Test
-	public void findArticlesByName() throws Exception {
+	public void findArticlesByAuthor() throws Exception {
 		mvc.perform(
 				get("/articles?author=kai").accept(
 						MediaType.parseMediaType("application/json")))
@@ -92,15 +92,24 @@ public class ApiIntegrationTest {
 	}
 
 	@Test
-	public void findArticlesById() throws Exception {
+	public void getArticlesById() throws Exception {
 		mvc.perform(
 				get("/articles/1").accept(
 						MediaType.parseMediaType("application/json")))
 				.andExpect(api.matches().aggregating(aggregator))
-				.andExpect(status().isOk())
+				.andExpect(status().isFound())
 				.andExpect(content().contentType(contentType))
 				.andExpect(jsonPath("$.id", is(1)))
-				.andExpect(jsonPath("$.content", is("abc")));
+				.andExpect(jsonPath("$.content", is("1")));
+	}
+
+	@Test
+	public void receive404ForUnknownArticle() throws Exception {
+		mvc.perform(
+				get("/articles/42").accept(
+						MediaType.parseMediaType("application/json")))
+						.andExpect(api.matches().aggregating(aggregator))
+						.andExpect(status().isNotFound());
 	}
 
 	@Test
