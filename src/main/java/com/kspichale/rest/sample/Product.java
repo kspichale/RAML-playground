@@ -1,20 +1,26 @@
 package com.kspichale.rest.sample;
 
-public class Article {
+public class Product {
 
 	private final long id;
-	private final String content;
+	private final String name;
+	private final String price;
 
-	public Article(long id, String content) {
+	public Product(long id, String name, String price) {
 		this.id = id;
-		this.content = content;
+		this.name = name;
+		this.price = price;
 	}
 
 	public long getId() {
 		return id;
 	}
 
-	public String getContent() {
-		return content;
+	public String getName() {
+		return name;
+	}
+
+	public String getPrice() {
+		return price;
 	}
 }

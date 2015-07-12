@@ -14,36 +14,37 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ArticleController {
+public class ProductController {
 
-	@RequestMapping(value = "/articles", method = RequestMethod.GET)
-	public List<Article> get(
-			@RequestParam(value = "author", required = false) String author,
+	@RequestMapping(value = "/products", method = RequestMethod.GET)
+	public List<Product> get(
+			@RequestParam(value = "name", required = false, defaultValue = "") String name,
 			@RequestParam(value = "page", required = false, defaultValue = "1") int page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") int size) {
 
-		final List<Article> list = new ArrayList<Article>();
+		final List<Product> list = new ArrayList<Product>();
 		for (int i = (page - 1) * size + 1; i < page * size + 1; i++) {
-			list.add(new Article(i, "" + i));
+			list.add(new Product(i, name + i, "10.0"));
 		}
 		return list;
 	}
 
-	@RequestMapping(value = "/articles/{articleId}", method = RequestMethod.GET)
-	public ResponseEntity<Article> findById(HttpServletRequest req,
-			@PathVariable Long articleId) {
-		if (articleId != null && 1 == articleId) {
-			final Article a = new Article(1, "1");
-			return new ResponseEntity<Article>(a, HttpStatus.FOUND);
+	@RequestMapping(value = "/products/{productId}", method = RequestMethod.GET)
+	public ResponseEntity<Product> findById(HttpServletRequest req,
+			@PathVariable Long productId) {
+		if (productId != null && 1 == productId) {
+			final Product a = new Product(1, "1", "10.0");
+			return new ResponseEntity<Product>(a, HttpStatus.FOUND);
 		}
 		// no article was found
-		throw new ArticleNotFoundException();
+		throw new ProductNotFoundException();
 	}
 
-	@RequestMapping(value = "/articles/{articleId}", method = RequestMethod.POST)
-	public ResponseEntity<Article> update(@PathVariable Long articleId,
-			@RequestParam(value = "content") String content) {
-		final Article a = new Article(articleId, content);
-		return new ResponseEntity<Article>(a, HttpStatus.CREATED);
+	@RequestMapping(value = "/products/{productId}", method = RequestMethod.POST)
+	public ResponseEntity<Product> update(@PathVariable Long productId,
+			@RequestParam(value = "name") String name,
+			@RequestParam(value = "price") String number) {
+		final Product a = new Product(productId, name, number);
+		return new ResponseEntity<Product>(a, HttpStatus.CREATED);
 	}
 }

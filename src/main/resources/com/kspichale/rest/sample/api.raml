@@ -7,16 +7,16 @@ version: v1
 traits:
  - searchable:
     queryParameters:
-     author:
-      displayName: Author
+     name:
+      displayName: Product label
       type: string
-      description: The author's name of the articles to search.
-      example: Kai
+      description: The product labels are not unique. 
+      example: smartphone
       required: false
  - !include pageable.yaml
 
-/articles:
- description: Collection of tech articles
+/products:
+ description: Collection of products
  get:
   is: [
        searchable, pageable
@@ -34,12 +34,13 @@ traits:
           "properties":
            {
             "id": { "type": "integer" },
-            "content": { "type": "string" }
+            "name": { "type": "string" },
+            "price" : { "type" : "string" }
            }
          }
         ]
        }
- /{articleId}:
+ /{productId}:
   get:
    responses:
     302:
@@ -49,8 +50,8 @@ traits:
         {
          "data":
          {
-          "id": 42,
-          "content": "article content"
+          "id": 1,
+          "name": "product name"
          },
          "success": true,
          "status": 302
@@ -59,7 +60,7 @@ traits:
      body:
       application/json:
        example: |
-        {"message": "Article not found"}
+        {"message": "Product not found"}
   post:
    responses:
     201:
@@ -69,8 +70,8 @@ traits:
         {
          "data":
          {
-          "id": 42,
-          "content": "article content"
+          "id": 1,
+          "name": "product name"
          },
          "success": true,
          "status": 201

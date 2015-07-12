@@ -52,41 +52,43 @@ public class ApiIntegrationTest {
 	}
 
 	@Test
-	public void getAllArticles() throws Exception {
+	public void getAllProducts() throws Exception {
 		mvc.perform(
-				get("/articles").accept(
+				get("/products").accept(
 						MediaType.parseMediaType("application/json")))
 				.andExpect(api.matches().aggregating(aggregator))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(contentType))
 				.andExpect(jsonPath("$.[0].id", is(1)))
-				.andExpect(jsonPath("$.[0].content", is("1")));
+				.andExpect(jsonPath("$.[0].name", is("1")))
+				.andExpect(jsonPath("$.[0].price", is("10.0")));
 	}
 
 	@Test
-	public void findArticlesByAuthor() throws Exception {
+	public void findProductsByName() throws Exception {
 		mvc.perform(
-				get("/articles?author=kai").accept(
+				get("/products?name=smartphone").accept(
 						MediaType.parseMediaType("application/json")))
 				.andExpect(api.matches().aggregating(aggregator))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(contentType))
 				.andExpect(jsonPath("$.[0].id", is(1)))
-				.andExpect(jsonPath("$.[0].content", is("1")));
+				.andExpect(jsonPath("$.[0].name", is("smartphone1")))
+				.andExpect(jsonPath("$.[0].price", is("10.0")));
 	}
 
 	@Test
 	public void getPagedArticles() throws Exception {
 		mvc.perform(
-				get("/articles?page=1&size=2").accept(
+				get("/products?page=1&size=2").accept(
 						MediaType.parseMediaType("application/json")))
 				.andExpect(api.matches().aggregating(aggregator))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(contentType))
 				.andExpect(jsonPath("$.[0].id", is(1)))
-				.andExpect(jsonPath("$.[0].content", is("1")))
+				.andExpect(jsonPath("$.[0].name", is("1")))
 				.andExpect(jsonPath("$.[1].id", is(2)))
-				.andExpect(jsonPath("$.[1].content", is("2")))
+				.andExpect(jsonPath("$.[1].name", is("2")))
 				.andExpect(jsonPath("$", hasSize(2)))
 				.andDo(MockMvcResultHandlers.print());
 	}
@@ -94,33 +96,34 @@ public class ApiIntegrationTest {
 	@Test
 	public void getArticlesById() throws Exception {
 		mvc.perform(
-				get("/articles/1").accept(
+				get("/products/1").accept(
 						MediaType.parseMediaType("application/json")))
 				.andExpect(api.matches().aggregating(aggregator))
 				.andExpect(status().isFound())
 				.andExpect(content().contentType(contentType))
 				.andExpect(jsonPath("$.id", is(1)))
-				.andExpect(jsonPath("$.content", is("1")));
+				.andExpect(jsonPath("$.name", is("1")));
 	}
 
 	@Test
 	public void receive404ForUnknownArticle() throws Exception {
 		mvc.perform(
-				get("/articles/42").accept(
+				get("/products/2").accept(
 						MediaType.parseMediaType("application/json")))
-						.andExpect(api.matches().aggregating(aggregator))
-						.andExpect(status().isNotFound());
+				.andExpect(api.matches().aggregating(aggregator))
+				.andExpect(status().isNotFound());
 	}
 
 	@Test
 	public void updateArticle() throws Exception {
 		mvc.perform(
-				post("/articles/1").param("content", "new content").accept(
+				post("/products/1").param("name", "new name").param("price", "9.99").accept(
 						MediaType.parseMediaType("application/json")))
 				.andExpect(api.matches().aggregating(aggregator))
 				.andExpect(status().isCreated())
 				.andExpect(content().contentType(contentType))
 				.andExpect(jsonPath("$.id", is(1)))
-				.andExpect(jsonPath("$.content", is("new content")));
+				.andExpect(jsonPath("$.name", is("new name")))
+				.andExpect(jsonPath("$.price", is("9.99")));
 	}
 }
