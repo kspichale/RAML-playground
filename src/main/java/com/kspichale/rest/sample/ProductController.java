@@ -13,9 +13,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+
+
+@Api(value="/products", description="The Products resource provides ...")
 @RestController
 public class ProductController {
 
+	@ApiOperation(value = "Get list of all products")
 	@RequestMapping(value = "/products", method = RequestMethod.GET)
 	public List<Product> get(
 			@RequestParam(value = "name", required = false, defaultValue = "") String name,
@@ -29,9 +37,12 @@ public class ProductController {
 		return list;
 	}
 
+	@ApiOperation(value = "Get single product")
+	@ApiResponse(code=200, message="die message", response=Product.class)
 	@RequestMapping(value = "/products/{productId}", method = RequestMethod.GET)
 	public ResponseEntity<Product> findById(HttpServletRequest req,
-			@PathVariable Long productId) {
+			@ApiParam(name="productId", allowableValues= "1, 2, 3", required=true, value="This is a unique id.")
+	        @PathVariable Long productId) {
 		if (productId != null && 1 == productId) {
 			final Product a = new Product(1, "1", "10.0");
 			return new ResponseEntity<Product>(a, HttpStatus.FOUND);
@@ -40,6 +51,7 @@ public class ProductController {
 		throw new ProductNotFoundException();
 	}
 
+	@ApiOperation(value = "Change specific product")
 	@RequestMapping(value = "/products/{productId}", method = RequestMethod.POST)
 	public ResponseEntity<Product> update(@PathVariable Long productId,
 			@RequestParam(value = "name") String name,
