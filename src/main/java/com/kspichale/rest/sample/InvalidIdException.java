@@ -4,6 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @SuppressWarnings("serial")
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Article not found")
-public class ProductNotFoundException extends RuntimeException {
+@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Provided Id is not valid")
+public class InvalidIdException extends RuntimeException {
 }

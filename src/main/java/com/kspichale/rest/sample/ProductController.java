@@ -17,14 +17,15 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
-
-@Api(value="/products", description="The Products resource provides ...")
+@Api(value = "/products", position = 1, description = "Provides functions to retrieve, search, and update products.")
 @RestController
+@RequestMapping("/products")
 public class ProductController {
 
 	@ApiOperation(value = "Get list of all products")
-	@RequestMapping(value = "/products", method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET)
 	public List<Product> get(
 			@RequestParam(value = "name", required = false, defaultValue = "") String name,
 			@RequestParam(value = "page", required = false, defaultValue = "1") int page,
@@ -37,13 +38,24 @@ public class ProductController {
 		return list;
 	}
 
-	@ApiOperation(value = "Get single product")
-	@ApiResponse(code=200, message="die message", response=Product.class)
-	@RequestMapping(value = "/products/{productId}", method = RequestMethod.GET)
-	public ResponseEntity<Product> findById(HttpServletRequest req,
-			@ApiParam(name="productId", allowableValues= "1, 2, 3", required=true, value="This is a unique id.")
-	        @PathVariable Long productId) {
-		if (productId != null && 1 == productId) {
+	@ApiOperation(value = "Find single product by ID", response = Product.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully found product", response = Product.class),
+			@ApiResponse(code = 400, message = "Invalid Id supplied", response = InvalidIdException.class ),
+			@ApiResponse(code = 404, message = "Product not found", response = ProductNotFoundException.class) })
+	@RequestMapping(value = "/{productId}", method = RequestMethod.GET)
+	public ResponseEntity<Product> findById(
+			HttpServletRequest req,
+			@ApiParam(name = "productId", allowableValues = "1, 2, 3", required = true, value = "This is a unique id.") @PathVariable String productId) {
+		
+		long parsedProductId = -1;
+		try {
+			parsedProductId = Long.parseLong(productId);
+		} catch (NumberFormatException pae) {
+			throw new InvalidIdException();
+		}
+		
+		if (1 == parsedProductId) {
 			final Product a = new Product(1, "1", "10.0");
 			return new ResponseEntity<Product>(a, HttpStatus.FOUND);
 		}
@@ -52,7 +64,7 @@ public class ProductController {
 	}
 
 	@ApiOperation(value = "Change specific product")
-	@RequestMapping(value = "/products/{productId}", method = RequestMethod.POST)
+	@RequestMapping(value = "/{productId}", method = RequestMethod.POST)
 	public ResponseEntity<Product> update(@PathVariable Long productId,
 			@RequestParam(value = "name") String name,
 			@RequestParam(value = "price") String number) {
